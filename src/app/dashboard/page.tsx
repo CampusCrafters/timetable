@@ -1,8 +1,9 @@
 "use client";
-import UpcomingClasses from "@/components/UpcomingClass/UpcomingClass";
+import UpcomingClasses from "@/components/UpcomingClasses/UpcomingClasses";
 import axios from "axios";
 import { useEffect, useState } from "react";
 import Image from 'next/image';
+import BgImage from '../../public/bg.png';
 
 export default function Home() {
   const [classDetails, setClassDetails] = useState({
@@ -81,13 +82,22 @@ export default function Home() {
 
   return (
     <div className="min-h-screen bg-stone-950 flex flex-col md:flex-row">
-      <div className="flex justify-center mt-10 sm:justify-start sm:p-2 sm:mx-3 md:w-2/7">
-      <div className="bg-neutral-950 rounded-xl min-w-sm p-6">
+      <div className="absolute inset-0 z-0 w-full h-full">
+                <Image
+                src={BgImage}
+                alt="Background"
+                fill
+                style={{ objectFit: 'cover' }}
+                quality={100}
+                className="filter blur-sm opacity-90"
+                />
+            </div>
+      <div className="absolute inset-0 bg-gradient-to-b from-stone-950 via-black/60 to-transparent z-10"></div>
+      <div className="flex justify-center m-auto sm:justify-start sm:p-2 sm:mx-3 md:w-2/7">
         {error && <p className="text-red-500">{error}</p>}
         <UpcomingClasses currentClass={classDetails.currentClass} nextClasses={classDetails.nextClasses} />
       </div>
-      </div>
-      <div className="hidden md:flex md:relative md:justify-end md:mx-12 md:w-5/7">
+      <div className="hidden md:flex md:relative md:justify-end md:mx-12 md:w-5/7 z-10">
       <Image priority src={`https://storage.googleapis.com/timetable-iiitk/${filename}`} alt="Timetable here" width={1000} height={1000} className="object-contain "></Image>
       </div>
     </div>

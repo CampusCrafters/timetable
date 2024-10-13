@@ -1,14 +1,32 @@
 import Link from 'next/link';
 import { FaGithub, FaEnvelope, FaUserGraduate } from 'react-icons/fa';
+import Image from 'next/image';
+import BgImage from '../../public/bg.png';
 
 export default function About() {
     return (
-        <div className="min-h-screen bg-stone-950 flex flex-col items-center justify-center p-10">
-            <div className="bg-neutral-950 rounded-2xl shadow-lg p-8 max-w-3xl mx-auto">
-                <h1 className="text-yellow-500 text-4xl font-bold mb-12 text-center">About This Project</h1>
+        <div className="min-h-screen bg-stone-950 flex flex-col items-center justify-center m-auto p-10 relative">
+            <div className="absolute inset-0 w-full h-full">
+                <Image
+                    src={BgImage}
+                    alt="Background"
+                    fill
+                    style={{ objectFit: 'cover' }}
+                    quality={100}
+                    className="filter blur-sm opacity-90"
+                />
+            </div>
+            <div className="absolute inset-0 bg-gradient-to-b from-stone-950 via-black/60 to-transparent"></div>
+            
+            <div className="relative mt-5 bg-neutral-950 rounded-2xl shadow-lg p-8 max-w-3xl mx-auto z-20">
+                <h1 className="text-yellow-500 text-4xl font-bold mb-4 text-center">About This Project</h1>
+                <p className="text-gray-300 mb-6 text-lg">
+                    Hi! I'm Vijay, a B.Tech 2nd-year student, and I created this timetable website to help students easily keep track of their classes. I have a strong passion for web development and enjoy working on projects that make everyday tasks easier.
+                </p>
+
                 <h2 className="text-yellow-500 text-2xl font-semibold mb-2">About CampusCrafters</h2>
                 <p className="text-gray-300 mb-6 text-lg">
-                     CampusCrafters, an organization focused on building projects that help us students. You can check out our work on 
+                    I'm a member of CampusCrafters, an organization focused on building projects that help us students. You can check out our work on 
                     <a href="https://github.com/CampusCrafters" className="text-yellow-500 underline mx-1" target="_blank" rel="noopener noreferrer">
                         <FaGithub className="inline text-yellow-500" /> GitHub
                     </a>.

@@ -16,6 +16,7 @@ async function verifyToken(token: string) {
 
 export async function middleware(request: NextRequest) {
   const token = request.cookies.get("token")?.value || '';
+  const admin = request.cookies.get("admin")?.value || '';
 
   if (request.nextUrl.pathname.startsWith('/login')) {
     if (token) {
@@ -27,6 +28,28 @@ export async function middleware(request: NextRequest) {
     return NextResponse.next();
   }
 
+  if(request.nextUrl.pathname.startsWith('/admin/login') || request.nextUrl.pathname.startsWith('/admin/register')) {
+    if(admin){
+      const verification = await verifyToken(admin);
+      if (verification) {
+        return NextResponse.redirect(new URL('/admin', request.url), 302);
+      }
+    }
+    return NextResponse.next();
+  }
+
+  if(request.nextUrl.pathname.startsWith('/admin')) {
+    if(!admin){
+      return NextResponse.redirect(new URL('/admin/login', request.url), 302);
+    }
+    if (admin) {
+      const verification = await verifyToken(admin);
+      if (verification) {
+        return NextResponse.next()
+      }
+      return NextResponse.redirect(new URL('/admin/login', request.url), 302);
+    }
+  }
  
   if (request.nextUrl.pathname.startsWith('/dashboard')) {
     if (!token) {
@@ -42,5 +65,5 @@ export async function middleware(request: NextRequest) {
 }
 
 export const config = {
-  matcher: ['/dashboard', '/login'],
+  matcher: ['/dashboard', '/login','/admin','/admin/login','/admin/register'],
 };

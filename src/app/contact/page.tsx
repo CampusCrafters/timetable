@@ -1,14 +1,27 @@
 import { FaGithub, FaLinkedin, FaNetworkWired } from 'react-icons/fa';
+import BgImage from '../../public/bg.png';
+import Image from 'next/image';
 
 export default function Home() {
   return (
     <div className="min-h-screen bg-stone-950 text-white flex flex-col items-center justify-center p-10">
-      <h1 className="text-yellow-500 text-6xl font-semibold mb-6 text-center">Contact</h1>
-      <p className="text-2xl mb-6 text-center">
+      <div className="absolute inset-0 z-0 w-full h-full">
+                <Image
+                src={BgImage}
+                alt="Background"
+                fill
+                style={{ objectFit: 'cover' }}
+                quality={100}
+                className="filter blur-sm opacity-90"
+                />
+            </div>
+      <div className="absolute inset-0 bg-gradient-to-b from-stone-950 via-black/60 to-transparent z-10"></div>
+      <h1 className="text-yellow-500 text-6xl font-semibold mb-8 text-center z-20">Contact</h1>
+      <p className="text-2xl mb-6 text-center z-20">
         You can send me an email at <span className="text-yellow-500">contact.vijayvenkat@gmail.com</span>
       </p>
 
-      <div className="flex flex-col md:flex-row md:space-x-10 space-y-4 md:space-y-0">
+      <div className="flex flex-col md:flex-row md:space-x-10 space-y-4 md:space-y-0 z-20">
         {/* GitHub */}
         <a 
           href="https://github.com/vijayvenkatj" 

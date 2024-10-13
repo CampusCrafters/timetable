@@ -9,8 +9,7 @@ export async function POST(request: NextRequest){
 
     const JWT_SECRET = process.env.JWT_SECRET || ''
 
-    const token = jwt.sign({username:username}, JWT_SECRET, {expiresIn: '8h'})
-
+    const token = jwt.sign({username:username}, JWT_SECRET)
     
 
     const regex = /^[a-zA-Z]+\d{2}[a-z]{3}\d+@iiitkottayam\.ac\.in$/;
@@ -24,7 +23,6 @@ export async function POST(request: NextRequest){
     response.cookies.set("token", token, {  
         sameSite: "lax", 
         path: '/',  
-        maxAge: 8 * 60 * 60,
     });
     
     return response

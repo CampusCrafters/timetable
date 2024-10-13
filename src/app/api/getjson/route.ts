@@ -34,6 +34,22 @@ interface TimetableDocument extends mongoose.Document {
   }[];
 }
 
+interface ChangesDocument extends mongoose.Document {
+  date: string;
+  timings: string;  // Changed from `String` to `string`
+  exchange: {
+    to: string;  // Changed from `String` to `string`
+  };
+}
+
+const ChangeSchema = new mongoose.Schema<ChangesDocument>({
+  date: { type: String, required: true },
+  timings: { type: String, required: true },
+  exchange: {
+    to: { type: String, required: true },
+  },
+});
+
 function getCurrentDay() {
   const days = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
   return days[new Date().getDay()];
@@ -69,9 +85,9 @@ function extractDetails(email: string) {
   const match = email.match(regex);
 
   if (match) {
-    const year = `20${match[1]}`; 
-    const course = match[2]; 
-    const rollNo = parseInt(match[3], 10); 
+    const year = `20${match[1]}`;
+    const course = match[2];
+    const rollNo = parseInt(match[3], 10);
 
     return { year, course, rollNo };
   } else {
@@ -88,6 +104,10 @@ function modelDb(YearNdBatch: string) {
   return mongoose.models[YearNdBatch] || mongoose.model<TimetableDocument>(YearNdBatch, TimetableSchema);
 }
 
+function modelChanges() {
+  return mongoose.models["Changes"] || mongoose.model<ChangesDocument>("Changes", ChangeSchema);
+}
+
 export async function GET() {
   try {
     await connectToDatabase();
@@ -99,12 +119,31 @@ export async function GET() {
     }
 
     const Timetable = modelDb(YearNdBatch);
+    const Changes = modelChanges();
     const day = getCurrentDay();
+    const date = new Date().toISOString().split('T')[0].split('-').reverse().join('-');
 
     const data = await Timetable.findOne({ day });
+    const year = YearNdBatch.slice(0, 4);
+    const batch = YearNdBatch.slice(4, 8);
+    console.log(year,batch);
+    const changes = await Changes.find({ date,year,batch });
+    console.log(changes);
+    console.log(data);
 
     if (!data) {
       return NextResponse.json({ error: 'No timetable found for today' }, { status: 404 });
+    }
+
+    if (changes) {
+      changes.forEach((change:any) => {
+        data.timetables.forEach((timetable: any) => {
+          if (change.timings === timetable.timings.split('-')[0]) {
+            timetable.course_id = change.exchange.to;
+            timetable.course_lecturer_name = change.exchange.lecturer_name;
+          }
+        });
+      });
     }
 
     return NextResponse.json({ timetables: data.timetables, YearNdBatch });

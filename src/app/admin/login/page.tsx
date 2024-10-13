@@ -1,21 +1,29 @@
+"use client"
 import { motion } from 'framer-motion';
 import { useState } from 'react';
-import TypingLogo from '../Logo/TypingLogo';
+import TypingLogo from '@/components/Logo/TypingLogo';
 import { toast } from 'react-toastify';
 import "react-toastify/dist/ReactToastify.css";
 import Image from 'next/image';
-import BgImage from '../../public/bg.png';
+import BgImage from '@/public/bg.png';
 import Link from 'next/link';
 import axios from 'axios';
 
 function Login() {
   const [username, setUsername] = useState('');
+  const [password, setPassword] = useState('');
 
-  const handleLogin = async ({username}: any) => {
-    const res = await axios.post('/api/login', {username});
-
-    if(res.data.error == "Invalid email"){
-      toast.error("Enter a Valid College Email", { theme: "dark",position: "bottom-right", autoClose: 3000 });
+  const handleLogin = async () => {
+    const formData = new FormData();
+    formData.append('email', username);
+    formData.append('password', password);
+    const res = await axios.post('/api/admin/login', formData, {
+      headers: {
+        'Content-Type': 'multipart/form-data',
+      },
+    });
+    if(res.data==="Invalid email or password"){
+      toast.error("Invalid email or password", { theme: "dark",position: "bottom-right", autoClose: 3000 });
     }
     else{
       toast.success("Logged in", { theme: "dark",position: "bottom-right", autoClose: 3000 });
@@ -25,7 +33,7 @@ function Login() {
 
   const handleSubmit = (e: any) => {
     e.preventDefault();
-    handleLogin({username});
+    handleLogin();
   };
 
   return (
@@ -76,7 +84,17 @@ function Login() {
             value={username}
             onChange={(e) => setUsername(e.target.value)}
             className="w-full p-3 border border-yellow-400 rounded-lg bg-[#202224] text-white placeholder-[#A5A6A7] focus:ring-2 focus:ring-yellow-500 focus:outline-none shadow-sm"
-            placeholder="Enter your College-Email"
+            placeholder="Enter your Gmail"
+            required
+          />
+          <label htmlFor="password" className="block text-white my-3 font-medium">Password</label>
+          <input
+            id="password"
+            type="password"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            className="w-full p-3 border border-yellow-400 rounded-lg bg-[#202224] text-white placeholder-[#A5A6A7] focus:ring-2 focus:ring-yellow-500 focus:outline-none shadow-sm"
+            placeholder="Enter your Password"
             required
           />
         </div>
@@ -92,8 +110,8 @@ function Login() {
       </motion.form>
 
 
-      <Link href="/admin/login" className="font-md font-light text-yellow-500 z-20">Admin? Click to access Admin panel</Link>
-
+      <Link href="/admin/register" className="font-md font-light text-yellow-500 z-20">Not Registered yet? Register here</Link>
+      
     </div>
   );
 }

@@ -1,31 +1,45 @@
+"use client"
 import { motion } from 'framer-motion';
 import { useState } from 'react';
-import TypingLogo from '../Logo/TypingLogo';
+import TypingLogo from '@/components/Logo/TypingLogo';
 import { toast } from 'react-toastify';
 import "react-toastify/dist/ReactToastify.css";
 import Image from 'next/image';
-import BgImage from '../../public/bg.png';
+import BgImage from '@/public/bg.png';
 import Link from 'next/link';
 import axios from 'axios';
 
 function Login() {
   const [username, setUsername] = useState('');
+  const [password, setPassword] = useState('');
 
-  const handleLogin = async ({username}: any) => {
-    const res = await axios.post('/api/login', {username});
-
-    if(res.data.error == "Invalid email"){
-      toast.error("Enter a Valid College Email", { theme: "dark",position: "bottom-right", autoClose: 3000 });
+  const handleLogin = async () => {
+    const formData = new FormData();
+    formData.append('email', username);
+    formData.append('password', password);
+    const res = await axios.post('/api/admin/register', formData, {
+      headers: {
+        'Content-Type': 'multipart/form-data',
+      },
+    });
+    if(res.data=="Admin already exists"){
+      toast.error("Admin already exists", { theme: "dark",position: "bottom-right", autoClose: 3000 });
+    }
+    else if(res.data=="Invalid email"){
+      toast.error("Enter a college email", { theme: "dark",position: "bottom-right", autoClose: 3000 });
+    }
+    else if(res.data=="Email and password are required"){
+      toast.error("Email and password are required", { theme: "dark",position: "bottom-right", autoClose: 3000 });
     }
     else{
-      toast.success("Logged in", { theme: "dark",position: "bottom-right", autoClose: 3000 });
+      toast.success("Registered", { theme: "dark",position: "bottom-right", autoClose: 3000 });
       window.location.href = res.request.responseURL
     }
   }
 
   const handleSubmit = (e: any) => {
     e.preventDefault();
-    handleLogin({username});
+    handleLogin();
   };
 
   return (
@@ -55,7 +69,7 @@ function Login() {
         transition={{ duration: 0.8, ease: 'easeInOut' }}
         className="relative text-5xl font-bold text-center text-white mb-12 flex items-center justify-center z-10"
       >
-        <span className="hidden md:flex md:mr-2 md:py-3">Login to</span>
+        <span className="hidden md:flex md:mr-2 md:py-3">Register to</span>
         <TypingLogo className="text-6xl font-bold inline" />
       </motion.h1>
 
@@ -76,7 +90,17 @@ function Login() {
             value={username}
             onChange={(e) => setUsername(e.target.value)}
             className="w-full p-3 border border-yellow-400 rounded-lg bg-[#202224] text-white placeholder-[#A5A6A7] focus:ring-2 focus:ring-yellow-500 focus:outline-none shadow-sm"
-            placeholder="Enter your College-Email"
+            placeholder="Enter your Gmail"
+            required
+          />
+          <label htmlFor="password" className="block text-white my-3 font-medium">Password</label>
+          <input
+            id="password"
+            type="password"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            className="w-full p-3 border border-yellow-400 rounded-lg bg-[#202224] text-white placeholder-[#A5A6A7] focus:ring-2 focus:ring-yellow-500 focus:outline-none shadow-sm"
+            placeholder="Enter your Password"
             required
           />
         </div>
@@ -87,13 +111,13 @@ function Login() {
           type="submit"
           className="inline-flex mt-5 h-12 items-center justify-center w-full rounded-lg bg-yellow-400 text-black font-semibold transition-colors hover:bg-yellow-500 focus:outline-none focus:ring-2 focus:ring-yellow-500 focus:ring-offset-2 focus:ring-offset-[#181A1B]"
         >
-          Log in
+          Register
         </motion.button>
       </motion.form>
 
 
-      <Link href="/admin/login" className="font-md font-light text-yellow-500 z-20">Admin? Click to access Admin panel</Link>
-
+      <Link href="/admin/login" className="font-md font-light text-yellow-500 z-20">Already Registered? Login here</Link>
+      
     </div>
   );
 }
